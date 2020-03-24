@@ -17,7 +17,7 @@ public class SnakeGame extends ApplicationAdapter {
 	public void create() {
 		batch = new SpriteBatch();
 		backgroundTexture = new Texture("background.png");
-		snake = new Snake();
+		snake = new Snake(Gdx.graphics.getHeight(), Gdx.graphics.getWidth());
 	}
 
 	@Override
@@ -31,26 +31,17 @@ public class SnakeGame extends ApplicationAdapter {
 		batch.draw(Snake.getTexture(), snake.getXPos(), snake.getYPos());
 
 		// listen for key presses
-		if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-			if (snake.isTowardsPositiveXAxis() || snake.isTowardsNegativeXAxis())
-				snake.toggleDirection(true, true);  // make it towards positive y axis
+		if (Gdx.input.isKeyJustPressed(Input.Keys.UP) && !snake.isMovingVertically())
+			snake.toggleDirection(true, true);  // make it towards positive y axis
 
-		} else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-			if (snake.isTowardsPositiveXAxis() || snake.isTowardsNegativeXAxis())
-				snake.toggleDirection(false, true);  // make it towards negative y axis
+		else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN) && !snake.isMovingVertically())
+			snake.toggleDirection(false, true);  // make it towards negative y axis
 
-		} else if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+		else if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && snake.isMovingVertically())
+			snake.toggleDirection(false, false);  // make it towards negative x axis
 
-			if (snake.isTowardsPositiveYAxis() || snake.isTowardsNegativeYAxis()) {
-				snake.toggleDirection(false, false);  // make it towards negative x axis
-			}
-
-		} else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
-			// if snake is towards positive Y-axis
-			if (snake.isTowardsPositiveYAxis() || snake.isTowardsNegativeYAxis()) {
-				snake.toggleDirection(true, false);  // make it towards positive x axis
-			}
-		}
+		else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && snake.isMovingVertically())
+			snake.toggleDirection(true, false);  // make it towards positive x axis
 
 		batch.end();
 	}
