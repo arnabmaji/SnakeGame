@@ -5,19 +5,28 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Rectangle;
 
 public class SnakeGame extends ApplicationAdapter {
 
 	private SpriteBatch batch;
 	private Texture backgroundTexture;
+	private int screenHeight;
+	private int screenWidth;
 
 	private Snake snake;
+	private Food food;
 
 	@Override
 	public void create() {
 		batch = new SpriteBatch();
 		backgroundTexture = new Texture("background.png");
-		snake = new Snake(Gdx.graphics.getHeight(), Gdx.graphics.getWidth());
+		screenHeight = Gdx.graphics.getHeight();
+		screenWidth = Gdx.graphics.getWidth();
+		snake = new Snake(screenHeight, screenWidth);
+		food = new Food(screenHeight, screenWidth);
+		food.create();
 	}
 
 	@Override
@@ -43,11 +52,33 @@ public class SnakeGame extends ApplicationAdapter {
 		else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && snake.isMovingVertically())
 			snake.toggleDirection(true, false);  // make it towards positive x axis
 
+		// draw food randomly on screen
+		batch.draw(Food.getTexture(), food.getXPos(), food.getYPos());
+
+		if (snakeAndFoodOverlaps()) food.create();  // create new food
+
 		batch.end();
 	}
 
 	@Override
 	public void dispose() {
 		batch.dispose();
+	}
+
+	private boolean snakeAndFoodOverlaps() {
+		Rectangle snakeRectangle = new Rectangle(  // create rectangle for current snake position
+				snake.getXPos(),
+				snake.getYPos(),
+				Snake.getTexture().getWidth(),
+				Snake.getTexture().getHeight()
+		);
+		Rectangle foodRectangle = new Rectangle(  // create rectangle for current food position
+				food.getXPos(),
+				food.getYPos(),
+				Food.getTexture().getWidth(),
+				Food.getTexture().getHeight()
+		);
+
+		return Intersector.overlaps(snakeRectangle, foodRectangle);
 	}
 }
