@@ -5,12 +5,11 @@ import com.badlogic.gdx.graphics.Texture;
 public class Snake {
 
     private static final Texture texture = new Texture("snake.png");
-    private static final int MAX_SNAKE_POSITION_CHANGE_COUNT = 8;
-    private static final float MAX_VELOCITY = 20.0f;
-    private static float velocity = MAX_VELOCITY;
+    private static final float MAX_VELOCITY = 3.0f;
+
+    private float velocity = MAX_VELOCITY;
     private float xPos;
     private float yPos;
-    private int snakePositionChangeCount = 0;
     private boolean isMovingVertically = false;
     private int screenHeight;
     private int screenWidth;
@@ -27,14 +26,14 @@ public class Snake {
     }
 
     public void move() {
-        if (snakePositionChangeCount > MAX_SNAKE_POSITION_CHANGE_COUNT) {  // change snake position in a delay
-            snakePositionChangeCount = 0;
-            // move position according to its direction
-            if (isMovingVertically) yPos += velocity; // increase snake's x position
-            else xPos += velocity;  // increase snake's y position
+        // move position according to its direction
+        if (isMovingVertically) yPos += velocity; // increase snake's x position
+        else xPos += velocity;  // increase snake's y position
 
-        } else snakePositionChangeCount++;
-
+        if (isOnEnd()) {
+            xPos = screenWidth / 2.0f;
+            yPos = screenHeight / 2.0f;
+        }
     }
 
     public void toggleDirection(boolean forward, boolean upward) {
@@ -56,5 +55,12 @@ public class Snake {
 
     public boolean isMovingVertically() {
         return isMovingVertically;
+    }
+
+    private boolean isOnEnd() {
+        return (xPos + texture.getWidth() >= screenWidth) ||
+                (xPos < texture.getWidth()) ||
+                (yPos + texture.getHeight() >= screenHeight) ||
+                (yPos < texture.getHeight());
     }
 }
