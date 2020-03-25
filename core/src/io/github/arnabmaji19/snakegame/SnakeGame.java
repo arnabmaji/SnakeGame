@@ -3,32 +3,42 @@ package io.github.arnabmaji19.snakegame;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import io.github.arnabmaji19.snakegame.model.Food;
 import io.github.arnabmaji19.snakegame.model.Position;
+import io.github.arnabmaji19.snakegame.model.ScoreBoard;
 import io.github.arnabmaji19.snakegame.model.Snake;
 
 public class SnakeGame extends ApplicationAdapter {
 
-	private SpriteBatch batch;
-	private Texture backgroundTexture;
-	private int screenHeight;
-	private int screenWidth;
+    private SpriteBatch batch;
+    private Texture backgroundTexture;
+    private BitmapFont scoreBitmapFont;
 
-	private Snake snake;
-	private Food food;
+    private int screenHeight;
+    private int screenWidth;
 
-	@Override
-	public void create() {
-		batch = new SpriteBatch();
-		backgroundTexture = new Texture("background.png");
-		screenHeight = Gdx.graphics.getHeight();
-		screenWidth = Gdx.graphics.getWidth();
-		snake = new Snake(screenHeight, screenWidth);
-		food = new Food(screenHeight, screenWidth);
-		food.create();
-	}
+    private Snake snake;
+    private Food food;
+    private ScoreBoard scoreBoard;
+
+    @Override
+    public void create() {
+        batch = new SpriteBatch();
+        backgroundTexture = new Texture("background.png");
+        scoreBitmapFont = new BitmapFont();
+        scoreBitmapFont.setColor(Color.WHITE);
+        scoreBitmapFont.getData().scale(1);
+        screenHeight = Gdx.graphics.getHeight();
+        screenWidth = Gdx.graphics.getWidth();
+        snake = new Snake(screenHeight, screenWidth);
+        food = new Food(screenHeight, screenWidth);
+        food.create();
+        scoreBoard = new ScoreBoard();
+    }
 
 	@Override
 	public void render() {
@@ -59,9 +69,15 @@ public class SnakeGame extends ApplicationAdapter {
         if (snake.eatsFood(food)) {  // if snake eats food
             snake.increaseBody();  // increase its body
             food.create();  // create new food
+            scoreBoard.increment();  // increase score
         }
 
-        if (snake.hitsEnd() || snake.hitsSelf()) snake.reset();  // reset snake body on hitting end or its body
+        if (snake.hitsEnd() || snake.hitsSelf()) {
+            snake.reset();  // reset snake body on hitting end or its body
+            scoreBoard.reset();  // reset score
+        }
+
+        scoreBitmapFont.draw(batch, scoreBoard.get() + "", 10, 30);
 
         batch.end();
     }
