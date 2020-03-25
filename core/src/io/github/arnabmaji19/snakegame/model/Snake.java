@@ -5,7 +5,6 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 
 import java.util.LinkedList;
-import java.util.Queue;
 
 public class Snake {
 
@@ -13,6 +12,7 @@ public class Snake {
     private static final int snakeHeight = texture.getHeight();
     private static final int snakeWidth = texture.getWidth();
     private static final int MAX_SNAKE_TEXTURE_CHANGE_DELAY = 5;
+    private static final int INITIAL_SNAKE_LENGTH = 3;
 
     private LinkedList<Position> snakeBody;
     private Position snakeHead;
@@ -21,6 +21,7 @@ public class Snake {
     private int screenHeight;
     private int screenWidth;
     private int textureChangeDelay = 0;
+    private boolean incrementBody = false;
 
     public Snake(int screenHeight, int screenWidth) {
         this.screenHeight = screenHeight;
@@ -35,19 +36,12 @@ public class Snake {
     public void move() {
         if (textureChangeDelay < MAX_SNAKE_TEXTURE_CHANGE_DELAY) textureChangeDelay++;
         else {
-            Position newGrid;
 
-            float newXPos = snakeHead.x;
-            float newYPos = snakeHead.y;
-            int mul = isMovingForward ? 1 : -1;  // determine moving direction
-            if (isMovingVertically) {
-                newYPos += (mul * snakeHeight);
-            } else {
-                newXPos += (mul * snakeWidth);
-            }
-            newGrid = new Position(newXPos, newYPos);
-            snakeBody.removeLast();  // remove snake's last part
-            snakeHead = newGrid;  // make the new position snake's head
+            Position newHead = createNewHead();  // create new head for snake
+            if (!incrementBody) {  // if no need to increment body
+                snakeBody.removeLast();  // remove snake's last part
+            } else incrementBody = false;  // otherwise do not remove snake's tail
+            snakeHead = newHead;  // make the new position snake's head
             snakeBody.addFirst(snakeHead);  // add new snake head to its body
             textureChangeDelay = 0;
         }
@@ -65,7 +59,7 @@ public class Snake {
         return isMovingVertically;
     }
 
-    public Queue<Position> getSnakeBody() {
+    public LinkedList<Position> getSnakeBody() {
         return snakeBody;
     }
 
@@ -86,16 +80,33 @@ public class Snake {
         return Intersector.overlaps(snakeHeadRectangle, foodRectangle);
     }
 
+    public void increaseBody() {
+        incrementBody = true;
+    }
+
     private LinkedList<Position> getInitialSnakePositions() {
         LinkedList<Position> list = new LinkedList<>();
         float yPos = screenHeight / 2.0f;
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < INITIAL_SNAKE_LENGTH; i++) {
             float xPos = (screenWidth / 2.0f) - (i * snakeWidth);
             list.add(new Position(xPos, yPos));
         }
         this.snakeHead = list.getFirst();
         return list;
+    }
+
+    private Position createNewHead() {
+
+        float newXPos = snakeHead.x;
+        float newYPos = snakeHead.y;
+        int mul = isMovingForward ? 1 : -1;  // determine moving direction
+        if (isMovingVertically) {
+            newYPos += (mul * snakeHeight);
+        } else {
+            newXPos += (mul * snakeWidth);
+        }
+        return new Position(newXPos, newYPos);
     }
 
 }

@@ -50,13 +50,16 @@ public class SnakeGame extends ApplicationAdapter {
         else if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && snake.isMovingVertically())
             snake.toggleDirection(false, false);  // make it towards negative x axis
 
-		else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && snake.isMovingVertically())
-			snake.toggleDirection(true, false);  // make it towards positive x axis
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && snake.isMovingVertically())
+            snake.toggleDirection(true, false);  // make it towards positive x axis
 
-		// draw food randomly on screen
-		batch.draw(Food.getTexture(), food.getXPos(), food.getYPos());
+        // draw food randomly on screen
+        batch.draw(Food.getTexture(), food.getXPos(), food.getYPos());
 
-        if (snake.eatsFood(food)) food.create();  // if snake eats food, create new food
+        if (snake.eatsFood(food)) {  // if snake eats food
+            snake.increaseBody();  // increase its body
+            food.create();  // create new food
+        }
 
         batch.end();
     }
