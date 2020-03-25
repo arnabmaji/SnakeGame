@@ -63,7 +63,7 @@ public class Snake {
         return snakeBody;
     }
 
-    public boolean eatsFood(Food food) {
+    public boolean eatsFood(Food food) {  // determines if snake and food intersects
         Rectangle snakeHeadRectangle = new Rectangle(
                 snakeHead.x,
                 snakeHead.y,
@@ -84,15 +84,42 @@ public class Snake {
         incrementBody = true;
     }
 
-    public boolean hitsEnd() {
+    public boolean hitsEnd() {  // determines if snake hits any of the four ends
         return (snakeHead.x < 0) ||
                 (snakeHead.y < 0) ||
                 ((snakeHead.x + snakeWidth) > screenWidth) ||
                 ((snakeHead.y + snakeHeight) > screenHeight);
     }
 
+    public boolean hitsSelf() {
+        boolean hitsSelf = false;
+        Rectangle snakeHeadRectangle = new Rectangle(
+                snakeHead.x,
+                snakeHead.y,
+                snakeWidth,
+                snakeHeight
+        );
+        for (Position position : snakeBody) {
+            if (position != snakeHead) {  // check if any of its part overlaps with head except the head
+                Rectangle rectangle = new Rectangle(
+                        position.x,
+                        position.y,
+                        snakeWidth,
+                        snakeHeight
+                );
+                if (Intersector.overlaps(snakeHeadRectangle, rectangle)) {  // if snake head hits its body
+                    hitsSelf = true;
+                    break;
+                }
+            }
+        }
+        return hitsSelf;
+    }
+
     public void reset() {
         snakeBody = getInitialSnakePositions();
+        isMovingVertically = false;
+        isMovingForward = true;
     }
 
     private LinkedList<Position> getInitialSnakePositions() {

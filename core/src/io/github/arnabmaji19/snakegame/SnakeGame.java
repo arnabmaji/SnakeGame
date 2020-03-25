@@ -61,7 +61,7 @@ public class SnakeGame extends ApplicationAdapter {
             food.create();  // create new food
         }
 
-        if (snake.hitsEnd()) snake.reset();  // reset snake body on hitting end
+        if (snake.hitsEnd() || snake.hitsSelf()) snake.reset();  // reset snake body on hitting end or its body
 
         batch.end();
     }
