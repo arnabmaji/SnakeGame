@@ -1,4 +1,4 @@
-package io.github.arnabmaji19.snakegame;
+package io.github.arnabmaji19.snakegame.model;
 
 import com.badlogic.gdx.graphics.Texture;
 
