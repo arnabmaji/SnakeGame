@@ -18,12 +18,10 @@ public class SnakeGame extends ApplicationAdapter {
     private Texture backgroundTexture;
     private BitmapFont scoreBitmapFont;
 
-    private int screenHeight;
-    private int screenWidth;
-
     private Snake snake;
     private Food food;
     private ScoreBoard scoreBoard;
+    private GameState gameState;
 
     @Override
     public void create() {
@@ -32,12 +30,15 @@ public class SnakeGame extends ApplicationAdapter {
         scoreBitmapFont = new BitmapFont();
         scoreBitmapFont.setColor(Color.WHITE);
         scoreBitmapFont.getData().scale(1);
-        screenHeight = Gdx.graphics.getHeight();
-        screenWidth = Gdx.graphics.getWidth();
+
+        int screenHeight = Gdx.graphics.getHeight();
+        int screenWidth = Gdx.graphics.getWidth();
         snake = new Snake(screenHeight, screenWidth);
         food = new Food(screenHeight, screenWidth);
         food.create();
+
         scoreBoard = new ScoreBoard();
+        gameState = GameState.Running;
     }
 
 	@Override
@@ -46,8 +47,15 @@ public class SnakeGame extends ApplicationAdapter {
         // draw background
         batch.draw(backgroundTexture, 0, 0);
 
-        snake.move();
-        // draw snake
+        if (gameState.equals(GameState.Running)) snake.move();
+        if (gameState.equals(GameState.Game_OVER) && Gdx.input.justTouched()) {
+            // create new game
+            scoreBoard.reset();  // reset score
+            snake.reset();  // reset snake body
+            food.create();  // create new food
+            gameState = GameState.Running;  // change game state to running
+        }
+
         drawSnake();
 
         // listen for key presses
@@ -72,12 +80,11 @@ public class SnakeGame extends ApplicationAdapter {
             scoreBoard.increment();  // increase score
         }
 
-        if (snake.hitsEnd() || snake.hitsSelf()) {
-            snake.reset();  // reset snake body on hitting end or its body
-            scoreBoard.reset();  // reset score
+        if (snake.hitsEnd() || snake.hitsSelf()) {  // game over
+            gameState = GameState.Game_OVER;  // set game state to game over
         }
 
-        scoreBitmapFont.draw(batch, scoreBoard.get() + "", 10, 30);
+        scoreBitmapFont.draw(batch, scoreBoard.get() + "", 10, 30);  // draw score
 
         batch.end();
     }
@@ -92,4 +99,6 @@ public class SnakeGame extends ApplicationAdapter {
             batch.draw(Snake.getTexture(), position.x, position.y);
         }
     }
+
+    public enum GameState {Running, Game_OVER}
 }

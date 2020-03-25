@@ -11,7 +11,7 @@ public class Snake {
     private static final Texture texture = new Texture("snake.png");
     private static final int snakeHeight = texture.getHeight();
     private static final int snakeWidth = texture.getWidth();
-    private static final int MAX_SNAKE_TEXTURE_CHANGE_DELAY = 5;
+    private static final int MAX_SNAKE_TEXTURE_CHANGE_DELAY = 4;
     private static final int INITIAL_SNAKE_LENGTH = 3;
 
     private LinkedList<Position> snakeBody;
@@ -37,11 +37,10 @@ public class Snake {
         if (textureChangeDelay < MAX_SNAKE_TEXTURE_CHANGE_DELAY) textureChangeDelay++;
         else {
 
-            Position newHead = createNewHead();  // create new head for snake
             if (!incrementBody) {  // if no need to increment body
                 snakeBody.removeLast();  // remove snake's last part
             } else incrementBody = false;  // otherwise do not remove snake's tail
-            snakeHead = newHead;  // make the new position snake's head
+            snakeHead = createNewHead();  // create new snake head
             snakeBody.addFirst(snakeHead);  // add new snake head to its body
             textureChangeDelay = 0;
         }
@@ -99,14 +98,15 @@ public class Snake {
                 snakeWidth,
                 snakeHeight
         );
-        for (Position position : snakeBody) {
-            if (position != snakeHead) {  // check if any of its part overlaps with head except the head
+        for (Position position : snakeBody) {  // check if any of its part overlaps with head except the head
+            if (position != snakeHead) {
                 Rectangle rectangle = new Rectangle(
                         position.x,
                         position.y,
                         snakeWidth,
                         snakeHeight
                 );
+
                 if (Intersector.overlaps(snakeHeadRectangle, rectangle)) {  // if snake head hits its body
                     hitsSelf = true;
                     break;
@@ -134,7 +134,7 @@ public class Snake {
         return list;
     }
 
-    private Position createNewHead() {
+    private Position createNewHead() {  // create new head for the snake
 
         float newXPos = snakeHead.x;
         float newYPos = snakeHead.y;
