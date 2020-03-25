@@ -84,6 +84,17 @@ public class Snake {
         incrementBody = true;
     }
 
+    public boolean hitsEnd() {
+        return (snakeHead.x < 0) ||
+                (snakeHead.y < 0) ||
+                ((snakeHead.x + snakeWidth) > screenWidth) ||
+                ((snakeHead.y + snakeHeight) > screenHeight);
+    }
+
+    public void reset() {
+        snakeBody = getInitialSnakePositions();
+    }
+
     private LinkedList<Position> getInitialSnakePositions() {
         LinkedList<Position> list = new LinkedList<>();
         float yPos = screenHeight / 2.0f;
