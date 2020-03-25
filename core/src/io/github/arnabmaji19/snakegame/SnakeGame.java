@@ -56,7 +56,7 @@ public class SnakeGame extends ApplicationAdapter {
 		// draw food randomly on screen
 		batch.draw(Food.getTexture(), food.getXPos(), food.getYPos());
 
-//		if (snakeAndFoodOverlaps()) food.create();  // create new food
+        if (snake.eatsFood(food)) food.create();  // if snake eats food, create new food
 
         batch.end();
     }
@@ -65,23 +65,6 @@ public class SnakeGame extends ApplicationAdapter {
     public void dispose() {
         batch.dispose();
     }
-
-//	private boolean snakeAndFoodOverlaps() {
-//		Rectangle snakeRectangle = new Rectangle(  // create rectangle for current snake position
-//				snake.getXPos(),
-//				snake.getYPos(),
-//				Snake.getTexture().getWidth(),
-//				Snake.getTexture().getHeight()
-//		);
-//		Rectangle foodRectangle = new Rectangle(  // create rectangle for current food position
-//				food.getXPos(),
-//				food.getYPos(),
-//				Food.getTexture().getWidth(),
-//				Food.getTexture().getHeight()
-//		);
-//
-//		return Intersector.overlaps(snakeRectangle, foodRectangle);
-//	}
 
     private void drawSnake() {
         for (Position position : snake.getSnakeBody()) {
